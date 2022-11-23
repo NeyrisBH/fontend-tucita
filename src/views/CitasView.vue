@@ -9,28 +9,24 @@
                 <thead>
                     <tr>
                         <th>IDENTIFICACION</th>
-                        <th>NOMBRES</th>
-                        <th>PRIMER APELLIDO</th>
-                        <th>SEGUNDO APELLIDO</th>
-                        <th>TELEFONO</th>
+                        <th>TIPO</th>
+                        <th>LUGAR</th>
+                        <th>FECHA</th>
+                        <th>PACIENTE</th>
                         <th>AREA</th>
-                        <th>REMISION</th>
-                        <th>USUARIO</th>
-                        <th>CONTRASEÑA</th>
+                        <th>MEDICO</th>
                         <th>ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>identificacion</td>
-                        <td>nombres</td>
-                        <td>primer apellido</td>
-                        <td>segundo apellido</td>
-                        <td>telefono</td>
+                        <td>tipo</td>
+                        <td>lugar</td>
+                        <td>fecha</td>
+                        <td>paciente</td>
                         <td>area</td>
-                        <td>remision</td>
-                        <td>usuario</td>
-                        <td>*********</td>
+                        <td>madico</td>
                         <td>
                             <div class="buttons-acciones">
                                 <button type="button" class="btn btn-warning" data-bs-toggle="modal"

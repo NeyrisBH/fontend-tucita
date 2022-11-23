@@ -1,17 +1,25 @@
 <template>
     <div id="app">
-        <router-view>
-            <div id="nav">
-                <router-link to="/">Inicio</router-link>
-                <router-link to="/pacientes">Inicio</router-link>
-                <router-link to="/doctores">Inicio</router-link>
-            </div>
-        </router-view>
+        <Header/>
+        <div class="row">
+            <RouterView/>
+        </div>
+        <Footer/>
     </div>
 </template>
 
 <script>
+import { RouterView } from 'vue-router';
+import Header from './components/Header.vue';
+import Footer from './components/Footer.vue'
+
+
 export default {
+    name: 'App',
+    components: {
+    Header,
+    Footer
+},
     data() {
         return { titulo: 'TuCita.com' }
     }
