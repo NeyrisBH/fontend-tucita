@@ -9,13 +9,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <routerLink to="/doctores" class="nav-link">Doctores</routerLink>
+                        <RouterLink to="/doctores" class="nav-link">Doctores</RouterLink>
                     </li>
                     <li class="nav-item">
-                        <routerLink to="/pacientes" class="nav-link">Pacientes</routerLink>
+                        <RouterLink to="/pacientes" class="nav-link">Pacientes</RouterLink>
                     </li>
                     <li class="nav-item">
-                        <routerLink to="/citas" class="nav-link">Citas</routerLink>
+                        <RouterLink to="/citas" class="nav-link">Citas</RouterLink>
+                    </li>
+                    <li class="nav-item">
+                        <RouterLink to="/tareas" class="nav-link">Tareas</RouterLink>
                     </li>
                 </ul>
             </div>

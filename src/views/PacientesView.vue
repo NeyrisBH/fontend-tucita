@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="row container">
         <div class="card-header-flex">
             <h3>Pacientes</h3>
             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#registerModal">Insertar</button>

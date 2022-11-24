@@ -11,7 +11,7 @@
 <script>
 import { RouterView } from 'vue-router';
 import Header from './components/Header.vue';
-import Footer from './components/Footer.vue'
+import Footer from './components/Footer.vue';
 
 
 export default {
@@ -27,5 +27,8 @@ export default {
 </script>
 
 <style scoped>
-
+    .row {
+    margin: 0;
+    padding: 0;
+}
 </style>
