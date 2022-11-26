@@ -8,7 +8,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>IDENTIFICACION</th>
+                        <th>ID</th>
                         <th>NOMBRES</th>
                         <th>PRIMER APELLIDO</th>
                         <th>SEGUNDO APELLIDO</th>
@@ -21,15 +21,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>identificacion</td>
-                        <td>nombres</td>
-                        <td>primer apellido</td>
-                        <td>segundo apellido</td>
-                        <td>telefono</td>
-                        <td>area</td>
-                        <td>remision</td>
-                        <td>usuario</td>
+                    <tr v-for="doctor in doctores">
+                        <td>{{doctor.id}}</td>
+                        <td>{{doctor.nombreMedico}}</td>
+                        <td>{{doctor.apellidoPaternoMedico}}</td>
+                        <td>{{doctor.apellidoMaternoMedico}}</td>
+                        <td>{{doctor.telefonoMedico}}</td>
+                        <td>{{doctor.areaMedico}}</td>
+                        <td>{{doctor.remision}}</td>
+                        <td>{{doctor.usuarioMedico}}</td>
                         <td>*********</td>
                         <td>
                             <div class="buttons-acciones">
@@ -48,45 +48,85 @@
             </table>
         </div>
     </div>
+    <CrearMedicoModal @medico-creado="consultaDoctores"/>
 </template>
 
 <script>
+import CrearMedicoModal from '../components/Medico/CrearMedicoModal.vue';
+
 export default {
     data() {
         return {
-            titulo: 'TuCita.com'
+            titulo: "TuCita.com",
+            doctores: []
+        };
+    },
+    methods: {
+        async consultaDoctores() {
+            const opciones = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                    "Authorization": "Basic dXNlcjpkMWQ2NjA3MS1jZTljLTQ5YjktOTJhNy0xM2E1MjUzNDQwMTY="
+                }
+            };
+            fetch("http://localhost:8080/api/medico", opciones)
+                .then(async (response) => {
+                if (!response.ok) {
+                    const error = new Error(response.statusText);
+                    error.json = response.json();
+                    console.log(error.message);
+                    throw error;
+                }
+                else {
+                    this.doctores = await response.json();
+                    console.log(this.doctores);
+                    console.log(this.doctores.length);
+                    // console.log(this.citas[0].nombrePaciente);
+                }
+            });
         }
-    }
+    },
+    beforeMount() {
+        this.consultaDoctores();
+    },
+    components: { CrearMedicoModal }
 }
 </script>
 
 <style scoped>
-    .buttons-acciones {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 5px;
-    }
+.buttons-acciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
 
-    .buttons-acciones button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+.buttons-acciones button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    .card-header-flex {
-        margin: 10px 50px;
-        display: grid;
-        grid-template-columns: 70% 30%;
-    }
+.card-header-flex {
+    margin: 10px 50px;
+    display: grid;
+    grid-template-columns: 70% 30%;
+}
 
-    .car-body {
-        margin: 20px 100px;
-    }
+.car-body {
+    margin: 20px 100px;
+    font-size: 12px;
+}
 
-    #editarModal {
-        display: flexbox;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
+.car-body th {
+    font-weight: 700;
+}
+
+#editarModal {
+    display: flexbox;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 </style>
