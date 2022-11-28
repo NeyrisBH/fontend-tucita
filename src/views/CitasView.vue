@@ -2,9 +2,10 @@
     <div class="container">
         <div class="card-header-flex">
             <h3>Citas</h3>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#registerModal">Insertar</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#citaModal"
+                @click="abrirModalRegistrar()">Insertar</button>
         </div>
-        <div class="car-body">
+        <div class="car-body table-responsive container">
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -28,11 +29,10 @@
                         <td>
                             <div class="buttons-acciones">
                                 <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#editarModal">
+                                    data-bs-target="#citaModal" @click="abrirModalEditar(cita)">
                                     <img src="../assets/svg/edit.svg" alt="">
                                 </button>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#eliminarModal">
+                                <button type="button" class="btn btn-danger" @click="eliminarConfCita(cita.id)">
                                     <img src="../assets/svg/delete.svg" alt="">
                                 </button>
                             </div>
@@ -42,21 +42,85 @@
             </table>
         </div>
     </div>
-    <CrearCitaModal @cita-creada="consultaCitas"/>
+
+    <!-- Modal - Register -->
+    <div class="modal fade" id="citaModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content container">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{tituloModal}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="row g-4 container-fr">
+                        <div class="col-md-6">
+                            <label for="id">Id</label>
+                            <input v-model="id" type="number" class="form-control" id="id" name="id">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombres">Tipo</label>
+                            <input v-model="tipoExamen" type="text" class="form-control" id="tipoExamen"
+                                name="tipoExamen">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="primerApellido">Centro medico</label>
+                            <input v-model="lugarProcedimiento" type="text" class="form-control" id="lugarProcedimiento"
+                                name="lugarProcedimiento">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="segundoApellido">Fecha</label>
+                            <input v-model="fechaProcedimiento" type="date" class="form-control" id="fechaProcedimiento"
+                                name="fechaProcedimiento">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telefono">Paciente</label>
+                            <input v-model="paciente" type="text" class="form-control" id="tepacientelefono"
+                                name="paciente">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="correo">Id Medico</label>
+                            <input v-model="idMedicoGeneral" type="number" class="form-control" id="idMedicoGeneral"
+                                name="idMedicoGeneral">
+                        </div>
+                    </form>
+                    <div class="modal-footer">
+                        <button @click="crearCita" class="btn btn-primary" v-if="btnCrear">Guardar</button>
+                        <button @click="actualizarCita(id)" class="btn btn-primary" v-if="btnActualizar">Actualizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
-import CrearCitaModal from '../components/Cita/CrearCitaModal.vue';
-
-
 export default {
     data() {
         return {
             titulo: "TuCita.com",
-            citas: []
+            tituloModal: '',
+            btnCrear: false,
+            btnActualizar: false,
+            citas: [],
+            id: null,
+            tipoExamen: '',
+            lugarProcedimiento: '',
+            fechaProcedimiento: '',
+            paciente: '',
+            idMedicoGeneral: null
         };
     },
     methods: {
+        limpiarForm() {
+            this.id = null,
+                this.tipoExamen = '',
+                this.lugarProcedimiento = '',
+                this.fechaProcedimiento = '',
+                this.paciente = '',
+                this.idMedicoGeneral = null
+        },
         async consultaCitas() {
             const opciones = {
                 method: "GET",
@@ -68,25 +132,138 @@ export default {
             };
             fetch("http://localhost:8080/api/ordenes", opciones)
                 .then(async (response) => {
-                if (!response.ok) {
-                    const error = new Error(response.statusText);
-                    error.json = response.json();
-                    console.log(error.message);
-                    throw error;
+                    if (!response.ok) {
+                        const error = new Error(response.statusText);
+                        error.json = response.json();
+                        console.log(error.message);
+                        throw error;
+                    }
+                    else {
+                        this.citas = await response.json();
+                        console.log(this.citas);
+                        console.log(this.citas.length);
+                        // console.log(this.citas[0].nombrePaciente);
+                    }
+                });
+        },
+        async crearCita() {
+            const opciones = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                    "Authorization": "Basic dXNlcjpkMWQ2NjA3MS1jZTljLTQ5YjktOTJhNy0xM2E1MjUzNDQwMTY="
+                },
+                body: JSON.stringify({
+                    id: this.id,
+                    lugarProcedimiento: this.lugarProcedimiento,
+                    tipoExamen: this.tipoExamen,
+                    fechaProcedimiento: this.fechaProcedimiento,
+                    paciente: this.paciente,
+                    idMedicoGeneral: this.idMedicoGeneral,
+                })
+            };
+            fetch("http://localhost:8080/api/ordenes", opciones)
+                .then(async (response) => {
+                    if (!response.ok) {
+                        const error = new Error(response.statusText);
+                        error.json = response.json();
+                        throw error;
+                    }
+                    else {
+                        const data = await response.json();
+                        console.log(data);
+                        this.limpiarForm();
+                        this.consultaCitas();
+                    }
+                });
+        },
+        async actualizarCita(id) {
+            const opciones = {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                    "Authorization": "Basic dXNlcjplYzNmNjIxZi03YWIxLTQxZDctODJmNi1iZjY4ZjZiMDVmZTE="
+                },
+                body: JSON.stringify({
+                    id: this.id,
+                    lugarProcedimiento: this.lugarProcedimiento,
+                    tipoExamen: this.tipoExamen,
+                    fechaProcedimiento: this.fechaProcedimiento,
+                    paciente: this.paciente,
+                    idMedicoGeneral: this.idMedicoGeneral,
+                })
+            };
+            fetch(`http://localhost:8080/api/ordenes/d/${id}`, opciones)
+                .then(async (response) => {
+                    if (!response.ok) {
+                        const error = new Error(response.statusText);
+                        error.json = response.json();
+                        throw error;
+                    }
+                    else {
+                        const data = await response.json();
+                        console.log(data);
+                        this.consultaCitas();
+                    }
+                });
+        },
+        async eliminarCita(id) {
+            const opciones = {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                    "Authorization": "Basic dXNlcjpkZTAzMDgyNy0yZTI5LTQxMGUtYTgxNi0zMzUzMjlhNWU5YzI="
                 }
-                else {
-                    this.citas = await response.json();
-                    console.log(this.citas);
-                    console.log(this.citas.length);
-                    // console.log(this.citas[0].nombrePaciente);
-                }
-            });
+            };
+            fetch(`http://localhost:8080/api/ordenes/d/${id}`, opciones)
+                .then(async (response) => {
+                    if (!response.ok) {
+                        const error = new Error(response.statusText);
+                        error.json = response.json();
+                        throw error;
+                    }
+                    else {
+                        const data = await response.json();
+                        console.log(data);
+                        this.consultaCitas();
+                    }
+                });
+        },
+        eliminarConfCita(id) {
+            if (!confirm('¿Esta seguro de eliminar la cita?')) return;
+
+            this.eliminarCita(id);
+        },
+        abrirModalRegistrar() {
+            this.id = null,
+            this.tipoExamen = '',
+            this.lugarProcedimiento = '',
+            this.fechaProcedimiento = '',
+            this.paciente = '',
+            this.idMedicoGeneral = null
+            this.tituloModal = "Registrar Cita",
+            this.btnCrear = true;
+            this.btnActualizar = false;
+        },
+        abrirModalEditar(data) {
+            this.id = data.id,
+                this.tipoExamen = data.tipoExamen,
+                this.lugarProcedimiento = data.lugarProcedimiento,
+                this.fechaProcedimiento = data.fechaProcedimiento,
+                this.paciente = data.paciente,
+                this.idMedicoGeneral = data.idMedicoGeneral,
+                this.tituloModal = "Editar Cita",
+                this.btnCrear = false;
+            this.btnActualizar = true;
         }
     },
     beforeMount() {
         this.consultaCitas();
     },
-    components: { CrearCitaModal }
+    components: {}
 }
 </script>
 
@@ -104,14 +281,14 @@ export default {
 }
 
 .card-header-flex {
-    margin: 10px 50px;
+    margin: 10px 30px;
     display: grid;
     grid-template-columns: 70% 30%;
 }
 
 .car-body {
-    margin: 20px 100px;
-    font-size: 12px;
+    margin: 20px auto;
+    font-size: 14px;
 }
 
 .car-body th {

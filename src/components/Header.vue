@@ -1,7 +1,9 @@
 <template>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <RouterLink to="/" class="navbar-brand">TuCita.com</RouterLink>
+            <RouterLink to="/" class="navbar-brand">
+                <img src="../assets/images/logo.png" alt="">
+            </RouterLink>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -40,8 +42,13 @@ export default {
 
 <style scoped>
 .navbar {
-    background-color: #ada6e7;
+    background-color: #d1d1da;
     font-weight: 500;
     font-size: medium;
+}
+
+.navbar-brand img {
+    max-width: 80px;
+    margin-left: 40px;
 }
 </style>

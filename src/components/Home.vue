@@ -40,15 +40,17 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
+    <Team/>
 </template>
 
 <script>
+import Team from './Team.vue';
+
 export default {
     data() {
-        return {
-            
-        }
-    }
+        return {};
+    },
+    components: { Team }
 }
 </script>
 
