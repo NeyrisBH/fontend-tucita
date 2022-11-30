@@ -85,7 +85,9 @@ export default {
             btnActualizar: false,
             id: 0,
             descripcion: '',
-            estado: ''
+            estado: '',
+            token: '',
+            continuar: false,
         };
     },
     methods: {
@@ -95,12 +97,13 @@ export default {
                 this.estado = ''
         },
         async consultaTareas() {
+            const authorization = "Bearer "+this.token;
             const opciones = {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjo5ZTJjOTkxZi1iNzk5LTRkMzgtYmJkOC00ZGEyOTk3ZWU1NGM="
+                    "Authorization": authorization
                 }
             };
             fetch("http://localhost:8080/api/tareas", opciones)
@@ -177,12 +180,14 @@ export default {
                 });
         },
         async eliminarTarea(id) {
+            this.solicitarToken();
+            const authorization = "Bearer "+this.token;
             const opciones = {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkZTAzMDgyNy0yZTI5LTQxMGUtYTgxNi0zMzUzMjlhNWU5YzI="
+                    "Authorization": authorization
                 }
             };
             fetch(`http://localhost:8080/api/tareas/${id}`, opciones)
@@ -219,10 +224,39 @@ export default {
                 this.tituloModal = "Editar Cita",
                 this.btnCrear = false;
             this.btnActualizar = true;
+        },
+        solicitarToken(){
+            const opciones = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+                body: JSON.stringify({
+                    usuario: "usuario2",
+                    clave: "usuario2",
+                    idTarea: 2
+                })
+            };
+            fetch("http://localhost:8080/api/token", opciones)
+            .then((response) => {
+                if (!response.ok) {
+                    console.log("Error de token");
+                    const error = new Error(response.statusText);
+                    error.json = response.json();
+                    throw error;
+                } else {
+                    this.token = response.json();
+                    console.log(this.token);
+                }
+            })
         }
     },
-    beforeMount() {
+    mounted() {
         this.consultaTareas();
+    },
+    beforeMount(){
+        this.solicitarToken();
     },
     components: {}
 }
