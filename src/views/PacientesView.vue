@@ -308,14 +308,11 @@ export default {
             fetch(`http://localhost:8080/api/pacientes/d/${id}`, opciones)
                 .then(async (response) => {
                     if (!response.ok) {
-                        const error = new Error(response.statusText);
-                        error.json = response.json();
-                        throw error;
+                        throw new Error(response.statusText);
                     }
                     else {
-                        const data = await response.json();
-                        console.log(data);
-                        this.consultaPacientes();
+                        // this.consultaPacientes();
+                        this.pacientes = this.pacientes.filter(item=>item.id!=id);
                     }
                 });
         },
@@ -391,7 +388,7 @@ export default {
 }
 
 .card-header-flex {
-    margin: 10px 30px;
+    margin: 100px 30px 10px 30px;
     display: grid;
     grid-template-columns: 70% 30%;
 }

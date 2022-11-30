@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid">
             <RouterLink to="/" class="navbar-brand">
                 <img src="../assets/images/logo.png" alt="">
