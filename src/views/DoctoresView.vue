@@ -342,7 +342,7 @@ export default {
 }
 
 .card-header-flex {
-    margin: 10px 30px;
+    margin: 100px 30px 10px 30px;
     display: grid;
     grid-template-columns: 70% 30%;
 }

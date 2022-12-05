@@ -86,7 +86,7 @@ export default {
             id: 0,
             descripcion: '',
             estado: '',
-            token: '',
+            token: localStorage.getItem('token'),
             continuar: false,
         };
     },
@@ -97,13 +97,13 @@ export default {
                 this.estado = ''
         },
         async consultaTareas() {
-            const authorization = "Bearer "+this.token;
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": authorization
+                    "Authorization": authorization,
                 }
             };
             fetch("http://localhost:8080/api/tareas", opciones)
@@ -116,9 +116,6 @@ export default {
                     }
                     else {
                         this.tareas = await response.json();
-                        console.log(this.tareas);
-                        console.log(this.tareas.length);
-                        console.log(this.tareas[0].descripcion);
                     }
                 });
         },
@@ -225,38 +222,37 @@ export default {
                 this.btnCrear = false;
             this.btnActualizar = true;
         },
-        solicitarToken(){
-            const opciones = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache",
-                },
-                body: JSON.stringify({
-                    usuario: "usuario2",
-                    clave: "usuario2",
-                    idTarea: 2
-                })
-            };
-            fetch("http://localhost:8080/api/token", opciones)
-            .then((response) => {
-                if (!response.ok) {
-                    console.log("Error de token");
-                    const error = new Error(response.statusText);
-                    error.json = response.json();
-                    throw error;
-                } else {
-                    this.token = response.json();
-                    console.log(this.token);
-                }
-            })
-        }
-    },
-    mounted() {
-        this.consultaTareas();
+        // solicitarToken(){
+        //     const opciones = {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //             "Cache-Control": "no-cache",
+        //         },
+        //         body: JSON.stringify({
+        //             usuario: "usuario1",
+        //             clave: "claveUsuario1",
+        //             idTarea: 1
+        //         })
+        //     };
+        //     fetch("http://localhost:8080/api/token", opciones)
+        //     .then(async (response) => {
+        //         if (!response.ok) {
+        //             console.log("Error de token");
+        //             const error = new Error(response.statusText);
+        //             error.json = response.json();
+        //             throw error;
+        //         } else {
+        //             const data = await response.json();
+        //             this.token = data.token,
+        //             localStorage.setItem('token', this.token);
+        //             this.consultaTareas();
+        //         }
+        //     })
+        // }
     },
     beforeMount(){
-        this.solicitarToken();
+        this.consultaTareas();
     },
     components: {}
 }
