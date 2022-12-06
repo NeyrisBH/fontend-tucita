@@ -56,7 +56,10 @@ export default {
 
 <style scoped>
     .carousel-item img {
-        max-height: 500px;
-        min-width: 100%;
+        max-height: 380px;
+    }
+
+    #carouselExampleDark{
+        padding: 0;
     }
 </style>

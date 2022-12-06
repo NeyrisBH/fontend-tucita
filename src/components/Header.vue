@@ -36,39 +36,6 @@ export default {
         return {
             token: localStorage.getItem('token')
         }
-    },
-    methods: {
-            solicitarToken(){
-            const opciones = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache",
-                },
-                body: JSON.stringify({
-                    usuario: "",
-                    clave: "",
-                    idTarea: null
-                })
-            };
-            fetch("http://localhost:8080/api/token", opciones)
-            .then(async (response) => {
-                if (!response.ok) {
-                    // console.log("Error de token");
-                    // const error = new Error(response.statusText);
-                    // error.json = response.json();
-                    // throw error;
-                    this.token = null.token,
-                    localStorage.setItem('token', this.token);
-                    console.log(this.token);
-                } else {
-                    const data = await response.json();
-                    this.token = data.token,
-                    localStorage.setItem('token', this.token);
-                    this.consultaTareas();
-                }
-            })
-        }
     }
 }
 </script>
