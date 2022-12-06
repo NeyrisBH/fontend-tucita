@@ -9,7 +9,7 @@
             <input v-model="usuario" class="form-input" type="text" id="usuario" required placeholder="Usuario">
             <label class="form-label" for="#contraseña">Contraseña:</label>
             <input v-model="clave" class="form-input" type="password" id="contraseña" placeholder="Contraseña">
-            <input @click="solicitarToken" class="form-submit" type="submit" value="Iniciar sesión">
+            <input @click="solicitarToken" class="form-submit" type="button" value="Iniciar sesión">
         </form>
     </div>
 </template>
@@ -35,13 +35,13 @@ export default {
                     "Cache-Control": "no-cache",
                 },
                 body: JSON.stringify({
-                    // usuario: this.usuario,
-                    // clave: this.clave,
-                    // idTarea: this.idTarea
+                    usuario: this.usuario,
+                    clave: this.clave,
+                    idTarea: this.idTarea
 
-                    usuario: "usuario1",
-                    clave: "claveUsuario1",
-                    idTarea: 1
+                    // usuario: "usuario1",
+                    // clave: "claveUsuario1",
+                    // idTarea: 1
                 })
             };
             fetch("http://localhost:8080/api/token", opciones)

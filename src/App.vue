@@ -1,7 +1,10 @@
 <template>
     <div id="app">
         <Header v-if="$route.meta.header !== 1"/>
-        <div class="row">
+        <div v-if="token != ''" class="row">
+            <RouterView />
+        </div>
+        <div v-else class="row">
             <RouterView />
         </div>
         <Footer v-if="$route.meta.header !== 1"/>
