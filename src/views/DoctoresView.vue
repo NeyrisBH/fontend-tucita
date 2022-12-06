@@ -16,8 +16,6 @@
                         <th>TELEFONO</th>
                         <th>AREA</th>
                         <th>REMISION</th>
-                        <th>USUARIO</th>
-                        <th>CONTRASEÑA</th>
                         <th>ACCIONES</th>
                     </tr>
                 </thead>
@@ -30,8 +28,6 @@
                         <td>{{ doctor.telefonoMedico }}</td>
                         <td>{{ doctor.areaMedico }}</td>
                         <td>{{ doctor.remision }}</td>
-                        <td>{{ doctor.usuarioMedico }}</td>
-                        <td>*********</td>
                         <td>
                             <div class="buttons-acciones">
                                 <button type="button" class="btn btn-warning" data-bs-toggle="modal"
@@ -94,24 +90,10 @@
                             <label for="remision">Remisión</label>
                             <input v-model="remision" type="text" class="form-control" id="remision" name="remision">
                         </div>
-                        <div class="col-md-6">
-                            <label for="usuario">Usuario</label>
-                            <input v-model="usuarioMedico" type="text" class="form-control" id="usuarioMedico" name="usuarioMedico">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="usuario">Contraseña</label>
-                            <input v-model="contraseñaMedico" type="password" class="form-control" id="contraseñaMedico"
-                                name="contraseñaMedico">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="usuario">Confirmar contraseña</label>
-                            <input v-model="contraseñaTemporal" type="password" class="form-control"
-                                id="contraseñaTemporal" name="contraseñaTemporal">
-                        </div>
                     </form>
                     <div class="modal-footer">
-                        <button @click="validarMedico" class="btn btn-primary" v-if="btnCrear">Guardar</button>
-                        <button @click="validarMedicoActualizar" class="btn btn-primary" v-if="btnActualizar">Actualizar</button>
+                        <button @click="crearMedico()" class="btn btn-primary" v-if="btnCrear">Guardar</button>
+                        <button @click="actualizarMedico(id)" class="btn btn-primary" v-if="btnActualizar">Actualizar</button>
                     </div>
                 </div>
             </div>
@@ -137,7 +119,8 @@ export default {
             remision: '',
             usuarioMedico: '',
             contraseñaMedico: '',
-            contraseñaTemporal: ''
+            contraseñaTemporal: '',
+            token: localStorage.getItem('token')
         };
     },
     methods: {
@@ -154,12 +137,14 @@ export default {
                 this.contraseñaTemporal = ''
         },
         async consultaDoctores() {
+            console.log(this.token)
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkMWQ2NjA3MS1jZTljLTQ5YjktOTJhNy0xM2E1MjUzNDQwMTY="
+                    "Authorization": authorization
                 }
             };
             fetch("http://localhost:8080/api/medico", opciones)
@@ -172,19 +157,17 @@ export default {
                     }
                     else {
                         this.doctores = await response.json();
-                        console.log(this.doctores);
-                        console.log(this.doctores.length);
-                        // console.log(this.citas[0].nombrePaciente);
                     }
                 });
         },
         async crearMedico() {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjplYzNmNjIxZi03YWIxLTQxZDctODJmNi1iZjY4ZjZiMDVmZTE="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
                     id: this.id,
@@ -193,10 +176,7 @@ export default {
                     apellidoMaternoMedico: this.apellidoMaternoMedico,
                     telefonoMedico: this.telefonoMedico,
                     areaMedico: this.areaMedico,
-                    remision: this.remision,
-                    usuarioMedico: this.usuarioMedico,
-                    contraseñaMedico: this.contraseñaMedico,
-                    contraseñaTemporal: this.contraseñaTemporal
+                    remision: this.remision
                 })
             };
             fetch("http://localhost:8080/api/medico", opciones)
@@ -208,19 +188,19 @@ export default {
                     }
                     else {
                         const data = await response.json();
-                        console.log(data);
                         this.limpiarForm();
                         this.consultaDoctores();
                     }
                 });
         },
         async actualizarMedico(id) {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic Basic dXNlcjplYzNmNjIxZi03YWIxLTQxZDctODJmNi1iZjY4ZjZiMDVmZTE="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
                     id: this.id,
@@ -229,9 +209,7 @@ export default {
                     apellidoMaternoMedico: this.apellidoMaternoMedico,
                     telefonoMedico: this.telefonoMedico,
                     areaMedico: this.areaMedico,
-                    remision: this.remision,
-                    usuarioMedico: this.usuarioMedico,
-                    contraseñaMedico: this.contraseñaMedico
+                    remision: this.remision
                 })
             };
             fetch(`http://localhost:8080/api/medico/d/${id}`, opciones)
@@ -243,32 +221,18 @@ export default {
                     }
                     else {
                         const data = await response.json();
-                        console.log(data);
                         this.consultaDoctores();
                     }
                 });
         },
-        validarMedico() {
-            if (this.contraseñaMedico == this.contraseñaTemporal) {
-                this.crearMedico();
-            } else {
-                alert('Las contraseñas no conciden');
-            }
-        },
-        validarMedicoActualizar() {
-            if (this.contraseñaMedico == this.contraseñaTemporal) {
-                this.actualizarMedico(this.id);
-            } else {
-                alert('Las contraseñas no conciden');
-            }
-        },
         async eliminarMedico(id) {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkZTAzMDgyNy0yZTI5LTQxMGUtYTgxNi0zMzUzMjlhNWU5YzI="
+                    "Authorization": authorization
                 }
             };
             fetch(`http://localhost:8080/api/medico/d/${id}`, opciones)
@@ -279,9 +243,8 @@ export default {
                         throw error;
                     }
                     else {
-                        const data = await response.json();
-                        console.log(data);
                         this.consultaDoctores();
+                        
                     }
                 });
         },

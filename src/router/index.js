@@ -29,14 +29,14 @@ const router = createRouter({
             name: 'tareas',
             component: () => import('../views/TareasView.vue')
         },
-        // {
-        //     path: '/login',
-        //     name: 'login',
-        //     component: () => import('../views/LoginView.vue'),
-        //     meta: {
-        //         header: 1
-        //     }
-        // },
+        {
+            path: '/login',
+            name: 'login',
+            component: () => import('../views/LoginView.vue'),
+            meta: {
+                header: 1
+            }
+        }
     ]
 })
 

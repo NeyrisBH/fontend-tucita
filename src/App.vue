@@ -16,13 +16,17 @@ import { RouterView } from 'vue-router';
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 
+setInterval(()=> {
+
+},600000)
 
 export default {
     name: 'App',
     components: {
-        Header,
-        Footer
-    },
+    Header,
+    Footer,
+    Footer
+},
     data() {
         return {
             titulo: 'TuCita.com',
@@ -30,37 +34,35 @@ export default {
         }
 
     },
-    methods: {
-        // solicitarToken() {
-        //     const opciones = {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Cache-Control": "no-cache",
-        //         },
-        //         body: JSON.stringify({
-        //             usuario: "usuario1",
-        //             clave: "claveUsuario1",
-        //             idTarea: 1
-        //         })
-        //     };
-        //     fetch("http://localhost:8080/api/token", opciones)
-        //         .then(async (response) => {
-        //             if (!response.ok) {
-        //                 console.log("Error de token");
-        //                 const error = new Error(response.statusText);
-        //                 error.json = response.json();
-        //                 throw error;
-        //             } else {
-        //                 const data = await response.json();
-        //                 this.token = data.token,
-        //                     localStorage.setItem('token', this.token);
-        //             }
-        //         })
-        // }
-    },
+    // methods: {
+    //     async actualizarToken() {
+    //         const authorization = "Bearer "+ this.token;
+    //         const opciones = {
+    //             method: "GET",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Cache-Control": "no-cache",
+    //                 "Authorization": authorization
+    //             }
+    //         };
+    //         fetch("http://localhost:8080/api/token/refresh", opciones)
+    //             .then(async (response) => {
+    //                 if (!response.ok) {
+    //                     const error = new Error(response.statusText);
+    //                     error.json = response.json();
+    //                     console.log(error.message);
+    //                     throw error;
+    //                 }
+    //                 else {
+    //                     const data = await response.json();
+    //                     this.token = data.token,
+    //                     localStorage.setItem('token', this.token);
+    //                 }
+    //             });
+    //     }
+    // },
     // beforeMount() {
-    //     this.solicitarToken();
+    //     this.actualizarToken();
     // }
 }
 

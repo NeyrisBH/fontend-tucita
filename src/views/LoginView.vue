@@ -2,9 +2,6 @@
     <div class="login">
         <h1 class="title">Inicio de sesión - TuCita.com</h1>
         <form action class="form">
-            <label class="form-label" for="#id">Identificación:</label>
-            <input v-model="idTarea" class="form-input" type="number" id="identificacion" required
-                placeholder="Identificación">
             <label class="form-label" for="#id">Usuario:</label>
             <input v-model="usuario" class="form-input" type="text" id="usuario" required placeholder="Usuario">
             <label class="form-label" for="#contraseña">Contraseña:</label>
@@ -37,11 +34,6 @@ export default {
                 body: JSON.stringify({
                     usuario: this.usuario,
                     clave: this.clave,
-                    idTarea: this.idTarea
-
-                    // usuario: "usuario1",
-                    // clave: "claveUsuario1",
-                    // idTarea: 1
                 })
             };
             fetch("http://localhost:8080/api/token", opciones)
@@ -54,7 +46,7 @@ export default {
                     } else {
                         const data = await response.json();
                         this.token = data.token,
-                            localStorage.setItem('token', this.token);
+                        localStorage.setItem('token', this.token);
                         console.log(this.token)
                     }
                 })
@@ -65,7 +57,7 @@ export default {
 
 <style scoped>
 .login {
-    padding: 2rem;
+    padding: 10rem;
 }
 
 .title {

@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <RouterLink to="/" class="navbar-brand">
                 <img src="../assets/images/logo.png" alt="">
@@ -8,21 +8,25 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul v-if="token != null" class="navbar-nav">
-                    <li class="nav-item">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li v-if="authorities.includes('Admin')" class="nav-item">
                         <RouterLink to="/doctores" class="nav-link">Doctores</RouterLink>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="authorities.includes('Admin') || authorities.includes('Doctor')" class="nav-item">
                         <RouterLink to="/pacientes" class="nav-link">Pacientes</RouterLink>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="authorities.includes('Paciente')" class="nav-item">
                         <RouterLink to="/citas" class="nav-link">Citas</RouterLink>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="authorities.includes('Admin')" class="nav-item">
                         <RouterLink to="/tareas" class="nav-link">Tareas</RouterLink>
                     </li>
                 </ul>
+                <form class="d-flex" role="search">
+                    <RouterLink to="/login" class="btn btn-outline-secondary my-2 my-sm-0" type="button">Iniciar sesión
+                    </RouterLink>
+                </form>
             </div>
         </div>
     </nav>
@@ -33,8 +37,12 @@ import { RouterLink } from 'vue-router';
 
 export default {
     data() {
+        const token = localStorage.getItem('token');
+        const payload = token == null ? null : JSON.parse(atob(token.split('.')[1]));
+        const authorities = payload == null ? [] : Array.from(payload.authorities);
         return {
-            token: localStorage.getItem('token')
+            token,
+            authorities
         }
     }
 }
