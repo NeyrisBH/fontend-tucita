@@ -2,31 +2,33 @@
     <section class="container-fluid">
         <div class="card-header-flex">
             <h3>Tareas</h3>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#tareaModal"
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#usuarioModal"
                 @click="abrirModalRegistrar()">Insertar</button>
         </div>
         <div class="car-body">
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        <th>USUARIO</th>
+                        <th>CALVE</th>
                         <th>ID</th>
-                        <th>DESCRIPCION</th>
-                        <th>ESTADO</th>
+                        <th>ROL</th>
                         <th>ACCIONES</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="tarea in tareas">
-                        <td>{{ tarea.id }}</td>
-                        <td>{{ tarea.descripcion }}</td>
-                        <td>{{ tarea.estado }}</td>
+                    <tr v-for="user in usuarios">
+                        <td>{{ user.usuario }}</td>
+                        <td>******</td>
+                        <td>{{ user.idUsuario }}</td>
+                        <td>{{ user.rol }}</td>
                         <td>
                             <div class="buttons-acciones">
                                 <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#tareaModal" @click="abrirModalEditar(tarea)">
+                                    data-bs-target="#usuarioModal" @click="abrirModalEditar(user)">
                                     <img src="../assets/svg/edit.svg" alt="">
                                 </button>
-                                <button type="button" class="btn btn-danger" @click="eliminarConfTarea(tarea.id)">
+                                <button type="button" class="btn btn-danger" @click="eliminarConfUsuario(user.usuario)">
                                     <img src="../assets/svg/delete.svg" alt="">
                                 </button>
                             </div>
@@ -39,7 +41,7 @@
 
 
     <!-- Modal - Register -->
-    <div class="modal fade" id="tareaModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
+    <div class="modal fade" id="usuarioModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content container">
@@ -50,22 +52,31 @@
                 <div class="modal-body">
                     <form class="row g-4 container-fr">
                         <div class="col-md-12">
-                            <label for="id">Id</label>
-                            <input v-model="id" type="number" class="form-control" id="id" name="id">
+                            <label for="usuario">Usuario</label>
+                            <input v-model="usuario" type="text" class="form-control" id="usuario" name="usuario">
                         </div>
                         <div class="col-md-12">
-                            <label for="descripcion">Descripción</label>
-                            <input v-model="descripcion" type="text" class="form-control" id="descripcion"
-                                name="descripcion">
+                            <label for="clave">Contraseña</label>
+                            <input v-model="clave" type="password" class="form-control" id="clave" name="clave">
                         </div>
                         <div class="col-md-12">
-                            <label for="estado">Estado</label>
-                            <input v-model="estado" type="text" class="form-control" id="estado" name="estado">
+                            <label for="idUsuario">ID</label>
+                            <input v-model="idUsuario" type="number" class="form-control" id="idUsuario"
+                                name="idUsuario">
+                        </div>
+                        <div class="col-md-12">
+                            <label for="rol">Rol</label>
+                            <!-- <input v-model="rol" type="text" class="form-control" id="rol" name="rol"> -->
+                            <select v-model="rol" class="form-control" id="sel1">
+                                <option>Admin</option>
+                                <option>Paciente</option>
+                                <option>Doctor</option>
+                            </select>
                         </div>
                     </form>
                     <div class="modal-footer">
-                        <button @click="crearTarea" class="btn btn-primary" v-if="btnCrear">Guardar</button>
-                        <button @click="actualizarTarea(id)" class="btn btn-primary"
+                        <button @click="crearUsuario" class="btn btn-primary" v-if="btnCrear">Guardar</button>
+                        <button @click="actualizarUsuario(usuario)" class="btn btn-primary"
                             v-if="btnActualizar">Actualizar</button>
                     </div>
                 </div>
@@ -80,24 +91,25 @@ export default {
         return {
             titulo: "TuCita.com",
             tituloModal: '',
-            tareas: [],
+            usuarios: [],
             btnCrear: false,
             btnActualizar: false,
-            id: 0,
-            descripcion: '',
-            estado: '',
-            token: localStorage.getItem('token'),
-            continuar: false,
+            usuario: '',
+            clave: '',
+            idUsuario: null,
+            rol: '',
+            token: localStorage.getItem('token')
         };
     },
     methods: {
         limpiarForm() {
-            this.id = null,
-                this.descripcion = '',
-                this.estado = ''
+            this.usuario = '',
+                this.clave = '',
+                this.idUsuario = null,
+                this.rol = ''
         },
-        async consultaTareas() {
-            const authorization = "Bearer "+ this.token;
+        async consultaUsurios() {
+            const authorization = "Bearer " + this.token;
             const opciones = {
                 method: "GET",
                 headers: {
@@ -106,7 +118,7 @@ export default {
                     "Authorization": authorization,
                 }
             };
-            fetch("http://localhost:8080/api/tareas", opciones)
+            fetch("http://localhost:8080/api/usuarios", opciones)
                 .then(async (response) => {
                     if (!response.ok) {
                         const error = new Error(response.statusText);
@@ -115,25 +127,27 @@ export default {
                         throw error;
                     }
                     else {
-                        this.tareas = await response.json();
+                        this.usuarios = await response.json();
                     }
                 });
         },
-        async crearTarea() {
+        async crearUsuario() {
+            const authorization = "Bearer " + this.token;
             const opciones = {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjo5ZTJjOTkxZi1iNzk5LTRkMzgtYmJkOC00ZGEyOTk3ZWU1NGM="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
-                    id: this.id,
-                    descripcion: this.descripcion,
-                    estado: this.estado
+                    usuario: this.usuario,
+                    clave: this.clave,
+                    idUsuario: this.idUsuario,
+                    rol: this.rol
                 })
             };
-            fetch("http://localhost:8080/api/tareas", opciones)
+            fetch("http://localhost:8080/api/usuarios", opciones)
                 .then(async (response) => {
                     if (!response.ok) {
                         const error = new Error(response.statusText);
@@ -142,27 +156,28 @@ export default {
                     }
                     else {
                         const data = await response.json();
-                        console.log(data);
                         this.limpiarForm();
-                        this.consultaTareas();
+                        this.consultaUsurios();
                     }
                 });
         },
-        async actualizarTarea(id) {
+        async actualizarUsuario(usuario) {
+            const authorization = "Bearer " + this.token;
             const opciones = {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjplYzNmNjIxZi03YWIxLTQxZDctODJmNi1iZjY4ZjZiMDVmZTE="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
-                    id: this.id,
-                    descripcion: this.descripcion,
-                    estado: this.estado
+                    usuario: this.usuario,
+                    clave: this.clave,
+                    idUsuario: this.idUsuario,
+                    rol: this.rol
                 })
             };
-            fetch(`http://localhost:8080/api/tareas/${id}`, opciones)
+            fetch(`http://localhost:8080/api/usuarios/${usuario}`, opciones)
                 .then(async (response) => {
                     if (!response.ok) {
                         const error = new Error(response.statusText);
@@ -171,14 +186,12 @@ export default {
                     }
                     else {
                         const data = await response.json();
-                        console.log(data);
-                        this.consultaTareas();
+                        this.consultaUsurios();
                     }
                 });
         },
-        async eliminarTarea(id) {
-            this.solicitarToken();
-            const authorization = "Bearer "+this.token;
+        async eliminarUsuario(usuario) {
+            const authorization = "Bearer " + this.token;
             const opciones = {
                 method: "DELETE",
                 headers: {
@@ -187,7 +200,7 @@ export default {
                     "Authorization": authorization
                 }
             };
-            fetch(`http://localhost:8080/api/tareas/${id}`, opciones)
+            fetch(`http://localhost:8080/api/usuarios/${usuario}`, opciones)
                 .then(async (response) => {
                     if (!response.ok) {
                         const error = new Error(response.statusText);
@@ -195,36 +208,36 @@ export default {
                         throw error;
                     }
                     else {
-                        const data = await response.json();
-                        console.log(data);
-                        this.consultaTareas();
+                        this.consultaUsurios();
                     }
                 });
         },
-        eliminarConfTarea(id) {
+        eliminarConfUsuario(usuario) {
             if (!confirm('¿Esta seguro de eliminar la tarea?')) return;
 
-            this.eliminarTarea(id);
+            this.eliminarUsuario(usuario);
         },
         abrirModalRegistrar() {
-            this.id = null,
-                this.descripcion = '',
-                this.estado = '',
-                this.tituloModal = "Registrar Tareas",
+            this.usuario = '',
+                this.clave = '',
+                this.idUsuario = null,
+                this.rol = '',
+                this.tituloModal = "Registrar Usuarios",
                 this.btnCrear = true;
             this.btnActualizar = false;
         },
         abrirModalEditar(data) {
-            this.id = data.id,
-                this.descripcion = data.descripcion,
-                this.estado = data.estado,
-                this.tituloModal = "Editar Cita",
+            this.usuario = data.usuario,
+                this.clave = data.clave,
+                this.idUsuario = data.idUsuario,
+                this.rol = data.rol,
+                this.tituloModal = "Editar Usuario",
                 this.btnCrear = false;
             this.btnActualizar = true;
         }
     },
-    beforeMount(){
-        this.consultaTareas();
+    beforeMount() {
+        this.consultaUsurios();
     },
     components: {}
 }

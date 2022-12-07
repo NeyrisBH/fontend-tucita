@@ -20,8 +20,6 @@
                         <th>CIUDAD</th>
                         <th>DIRECCION</th>
                         <th>CODIGO</th>
-                        <th>USUARIO</th>
-                        <th>CONTRASEÑA</th>
                         <th>ACCIONES</th>
                     </tr>
                 </thead>
@@ -38,8 +36,6 @@
                         <td>{{ paciente.ciudadResidenciaPaciente }}</td>
                         <td>{{ paciente.direccionResidenciaPaciente }}</td>
                         <td>{{ paciente.codigoAfiliacionPaciente }}</td>
-                        <td>{{ paciente.usuarioPaciente }}</td>
-                        <td>*********</td>
                         <td>
                             <div class="buttons-acciones">
                                 <button type="button" class="btn btn-warning" data-bs-toggle="modal"
@@ -122,25 +118,10 @@
                             <input v-model="codigoAfiliacionPaciente" type="number" class="form-control"
                                 id="direcodigoAfiliacionción" name="codigoAfiliacion">
                         </div>
-                        <div class="col-md-6">
-                            <label for="usuario">Usuario</label>
-                            <input v-model="usuarioPaciente" type="text" class="form-control" id="usuario"
-                                name="usuario">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="usuario">Contraseña</label>
-                            <input v-model="contraseñaPaciente" type="password" class="form-control" id="contraseña"
-                                name="contraseña">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="usuario">Confirmar contraseña</label>
-                            <input v-model="contraseñaTemporal" type="password" class="form-control"
-                                id="contraseñaTemporal" name="contraseñaTemporal">
-                        </div>
                     </form>
                     <div class="modal-footer">
-                        <button @click="validarPaiente" class="btn btn-primary" v-if="btnCrear">Guardar</button>
-                        <button @click="validarPacienteActualizar" class="btn btn-primary" v-if="btnActualizar">Actualizar</button>
+                        <button @click="crearPaciente()" class="btn btn-primary" v-if="btnCrear">Guardar</button>
+                        <button @click="actualizarPaciente(id)" class="btn btn-primary" v-if="btnActualizar">Actualizar</button>
                     </div>
                 </div>
             </div>
@@ -168,19 +149,18 @@ export default {
             ciudadResidenciaPaciente: '',
             direccionResidenciaPaciente: '',
             codigoAfiliacionPaciente: null,
-            usuarioPaciente: '',
-            contraseñaPaciente: '',
-            contraseñaTemporal: ''
+            token: localStorage.getItem('token')
         };
     },
     methods: {
         async consultaPacientes() {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkZTAzMDgyNy0yZTI5LTQxMGUtYTgxNi0zMzUzMjlhNWU5YzI="
+                    "Authorization": authorization
                 }
             };
             fetch("http://localhost:8080/api/pacientes", opciones)
@@ -207,18 +187,16 @@ export default {
             this.generoPaciente = '',
             this.ciudadResidenciaPaciente = '',
             this.direccionResidenciaPaciente = '',
-            this.codigoAfiliacionPaciente = null,
-            this.usuarioPaciente = '',
-            this.contraseñaPaciente = '',
-            this.contraseñaTemporal = ''
+            this.codigoAfiliacionPaciente = null
         },
         async crearPaciente() {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkZTAzMDgyNy0yZTI5LTQxMGUtYTgxNi0zMzUzMjlhNWU5YzI="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
                     id: this.id,
@@ -231,9 +209,7 @@ export default {
                     generoPaciente: this.generoPaciente,
                     ciudadResidenciaPaciente: this.ciudadResidenciaPaciente,
                     direccionResidenciaPaciente: this.direccionResidenciaPaciente,
-                    codigoAfiliacionPaciente: this.codigoAfiliacionPaciente,
-                    usuarioPaciente: this.usuarioPaciente,
-                    contraseñaPaciente: this.contraseñaPaciente
+                    codigoAfiliacionPaciente: this.codigoAfiliacionPaciente
                 })
             };
             fetch("http://localhost:8080/api/pacientes", opciones)
@@ -251,20 +227,14 @@ export default {
                     }
                 });
         },
-        validarPaiente(){
-            if (this.contraseñaPaciente == this.contraseñaTemporal) {
-                this.crearPaciente();
-            } else {
-                alert('Las contraseñas no conciden');
-            }
-        },
         async actualizarPaciente(id) {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic Basic dXNlcjplYzNmNjIxZi03YWIxLTQxZDctODJmNi1iZjY4ZjZiMDVmZTE="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
                     id: this.id,
@@ -278,8 +248,6 @@ export default {
                     ciudadResidenciaPaciente: this.ciudadResidenciaPaciente,
                     direccionResidenciaPaciente: this.direccionResidenciaPaciente,
                     codigoAfiliacionPaciente: this.codigoAfiliacionPaciente,
-                    usuarioPaciente: this.usuarioPaciente,
-                    contraseñaPaciente: this.contraseñaPacientes
                 })
             };
             fetch(`http://localhost:8080/api/pacientes/d/${id}`, opciones)
@@ -291,18 +259,18 @@ export default {
                     }
                     else {
                         const data = await response.json();
-                        console.log(data);
                         this.consultaPacientes();
                     }
                 });
         },
         async eliminarPaciente(id) {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkZTAzMDgyNy0yZTI5LTQxMGUtYTgxNi0zMzUzMjlhNWU5YzI="
+                    "Authorization": authorization
                 }
             };
             fetch(`http://localhost:8080/api/pacientes/d/${id}`, opciones)
@@ -311,7 +279,6 @@ export default {
                         throw new Error(response.statusText);
                     }
                     else {
-                        // this.consultaPacientes();
                         this.pacientes = this.pacientes.filter(item=>item.id!=id);
                     }
                 });
@@ -320,13 +287,6 @@ export default {
             if (!confirm('¿Esta seguro de eliminar el paciente?')) return;
 
             this.eliminarPaciente(id);
-        },
-        validarPacienteActualizar() {
-            if (this.contraseñaPaciente == this.contraseñaTemporal) {
-                this.actualizarPaciente(this.id);
-            } else {
-                alert('Las contraseñas no conciden');
-            }
         },
         abrirModalRegistrar() {
             this.id = null,
@@ -340,9 +300,6 @@ export default {
             this.ciudadResidenciaPaciente = '',
             this.direccionResidenciaPaciente = '',
             this.codigoAfiliacionPaciente = null,
-            this.usuarioPaciente = '',
-            this.contraseñaPaciente = '',
-            this.contraseñaTemporal = '',
             this.tituloModal = "Registrar Paciente",
             this.btnCrear = true;
             this.btnActualizar = false;
@@ -359,9 +316,6 @@ export default {
             this.ciudadResidenciaPaciente = data.ciudadResidenciaPaciente,
             this.direccionResidenciaPaciente = data.direccionResidenciaPaciente,
             this.codigoAfiliacionPaciente = data.codigoAfiliacionPaciente,
-            this.usuarioPaciente = data.usuarioPaciente,
-            this.contraseñaPaciente = data.contraseñaPaciente,
-            this.contraseñaTemporal = data.contraseñaTemporal,
             this.tituloModal = "Editar Medico",
             this.btnCrear = false;
             this.btnActualizar = true;

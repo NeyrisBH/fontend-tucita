@@ -137,7 +137,6 @@ export default {
                 this.contraseñaTemporal = ''
         },
         async consultaDoctores() {
-            console.log(this.token)
             const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "GET",

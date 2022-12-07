@@ -16,15 +16,17 @@
                     <li v-if="authorities.includes('Admin') || authorities.includes('Doctor')" class="nav-item">
                         <RouterLink to="/pacientes" class="nav-link">Pacientes</RouterLink>
                     </li>
-                    <li v-if="authorities.includes('Paciente')" class="nav-item">
+                    <li v-if="authorities.includes('Admin') || authorities.includes('Doctor') || authorities.includes('Paciente')" class="nav-item">
                         <RouterLink to="/citas" class="nav-link">Citas</RouterLink>
                     </li>
                     <li v-if="authorities.includes('Admin')" class="nav-item">
-                        <RouterLink to="/tareas" class="nav-link">Tareas</RouterLink>
+                        <RouterLink to="/usuarios" class="nav-link">Usuarios</RouterLink>
                     </li>
                 </ul>
                 <form class="d-flex" role="search">
-                    <RouterLink to="/login" class="btn btn-outline-secondary my-2 my-sm-0" type="button">Iniciar sesión
+                    <RouterLink to="/" @click="cerrarSesion()" v-if="(token != null)"  class="btn btn-outline-secondary my-2 my-sm-0" type="button">Cerrar sesión
+                    </RouterLink>
+                    <RouterLink to="/login" v-else  class="btn btn-outline-secondary my-2 my-sm-0" type="button">Iniciar sesión
                     </RouterLink>
                 </form>
             </div>
@@ -43,6 +45,11 @@ export default {
         return {
             token,
             authorities
+        }
+    },
+    methods: {
+        cerrarSesion(){
+            localStorage.removeItem('token')
         }
     }
 }

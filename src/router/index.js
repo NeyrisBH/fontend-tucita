@@ -25,9 +25,9 @@ const router = createRouter({
             component: () => import('../views/CitasView.vue')
         },
         {
-            path: '/tareas',
+            path: '/usuarios',
             name: 'tareas',
-            component: () => import('../views/TareasView.vue')
+            component: () => import('../views/UsuariosView.vue')
         },
         {
             path: '/login',

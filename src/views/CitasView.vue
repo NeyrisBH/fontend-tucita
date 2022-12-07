@@ -109,7 +109,8 @@ export default {
             lugarProcedimiento: '',
             fechaProcedimiento: '',
             paciente: '',
-            idMedicoGeneral: null
+            idMedicoGeneral: null,
+            token: localStorage.getItem('token')
         };
     },
     methods: {
@@ -122,12 +123,13 @@ export default {
                 this.idMedicoGeneral = null
         },
         async consultaCitas() {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkMWQ2NjA3MS1jZTljLTQ5YjktOTJhNy0xM2E1MjUzNDQwMTY="
+                    "Authorization": authorization
                 }
             };
             fetch("http://localhost:8080/api/ordenes", opciones)
@@ -140,19 +142,17 @@ export default {
                     }
                     else {
                         this.citas = await response.json();
-                        console.log(this.citas);
-                        console.log(this.citas.length);
-                        // console.log(this.citas[0].nombrePaciente);
                     }
                 });
         },
         async crearCita() {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkMWQ2NjA3MS1jZTljLTQ5YjktOTJhNy0xM2E1MjUzNDQwMTY="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
                     id: this.id,
@@ -172,19 +172,19 @@ export default {
                     }
                     else {
                         const data = await response.json();
-                        console.log(data);
                         this.limpiarForm();
                         this.consultaCitas();
                     }
                 });
         },
         async actualizarCita(id) {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjplYzNmNjIxZi03YWIxLTQxZDctODJmNi1iZjY4ZjZiMDVmZTE="
+                    "Authorization": authorization
                 },
                 body: JSON.stringify({
                     id: this.id,
@@ -204,18 +204,18 @@ export default {
                     }
                     else {
                         const data = await response.json();
-                        console.log(data);
                         this.consultaCitas();
                     }
                 });
         },
         async eliminarCita(id) {
+            const authorization = "Bearer "+ this.token;
             const opciones = {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
-                    "Authorization": "Basic dXNlcjpkZTAzMDgyNy0yZTI5LTQxMGUtYTgxNi0zMzUzMjlhNWU5YzI="
+                    "Authorization": authorization
                 }
             };
             fetch(`http://localhost:8080/api/ordenes/d/${id}`, opciones)
@@ -226,8 +226,6 @@ export default {
                         throw error;
                     }
                     else {
-                        const data = await response.json();
-                        console.log(data);
                         this.consultaCitas();
                     }
                 });

@@ -24,7 +24,6 @@ export default {
     },
     methods: {
         solicitarToken() {
-            console.log('esta es la funcion');
             const opciones = {
                 method: "POST",
                 headers: {
@@ -47,7 +46,7 @@ export default {
                         const data = await response.json();
                         this.token = data.token,
                         localStorage.setItem('token', this.token);
-                        console.log(this.token)
+                        this.$router.push('/citas');
                     }
                 })
         }
